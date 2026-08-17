@@ -4,7 +4,7 @@ const HANDLES = {
   leetcode: "NomNomCode"
 };
 
-const CSES_SOLVED_COUNT = 16;
+const CSES_SOLVED_COUNT = 53;
 const CSES_TOTAL_COUNT = 400;
 
 const FALLBACK_TOTALS = {
@@ -42,6 +42,12 @@ const elements = {
   leetcodeHard: document.querySelector("#leetcodeHard"),
   codeforcesDifficultyGrid: document.querySelector("#codeforcesDifficultyGrid"),
   atcoderDifficultyGrid: document.querySelector("#atcoderDifficultyGrid"),
+  leetcodeDifficultyGrid: document.querySelector("#leetcodeDifficultyGrid"),
+  profileCodeforcesRating: document.querySelector("#profileCodeforcesRating"),
+  codeforcesRatingChart: document.querySelector("#codeforcesRatingChart"),
+  leetcodeRatingChart: document.querySelector("#leetcodeRatingChart"),
+  codeforcesRatingSummary: document.querySelector("#codeforcesRatingSummary"),
+  leetcodeRatingSummary: document.querySelector("#leetcodeRatingSummary"),
   statusMessage: document.querySelector("#statusMessage"),
   problemList: document.querySelector("#problemList")
 };
@@ -70,6 +76,12 @@ const atcoderDifficultyBuckets = [
   { label: "Yellow", min: 2000, max: 2399, range: "2000-2399" },
   { label: "Orange", min: 2400, max: 2799, range: "2400-2799" },
   { label: "Red", min: 2800, max: Infinity, range: "2800+" }
+];
+
+const leetcodeDifficultyBuckets = [
+  { label: "Easy", range: "Foundation" },
+  { label: "Medium", range: "Core practice" },
+  { label: "Hard", range: "Advanced" }
 ];
 
 function wait(ms) {
@@ -129,6 +141,55 @@ function renderDifficultyGrid(container, buckets, counts, cardClass = "") {
       <small>${bucket.range}</small>
     </article>
   `).join("");
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[character]);
+}
+
+function renderRatingChart(container, summary, points, platform) {
+  if (!points.length) {
+    container.innerHTML = `<div class="chart-empty">${platform === "LeetCode" ? "Rating history is temporarily unavailable because the third-party API is rate-limited." : "No rated contests were returned."}</div>`;
+    summary.innerHTML = "<span><small>Current</small><strong>—</strong></span><span><small>Peak</small><strong>—</strong></span>";
+    return;
+  }
+
+  const width = 640;
+  const height = 240;
+  const pad = { top: 22, right: 18, bottom: 30, left: 48 };
+  const values = points.map((point) => point.rating);
+  const rawMin = Math.min(...values);
+  const rawMax = Math.max(...values);
+  const spread = Math.max(100, rawMax - rawMin);
+  const min = Math.floor((rawMin - spread * 0.12) / 100) * 100;
+  const max = Math.ceil((rawMax + spread * 0.12) / 100) * 100;
+  const x = (index) => pad.left + (points.length === 1 ? 0 : index / (points.length - 1)) * (width - pad.left - pad.right);
+  const y = (rating) => pad.top + (max - rating) / Math.max(1, max - min) * (height - pad.top - pad.bottom);
+  const line = points.map((point, index) => `${index === 0 ? "M" : "L"}${x(index).toFixed(1)},${y(point.rating).toFixed(1)}`).join(" ");
+  const area = `${line} L${x(points.length - 1).toFixed(1)},${height - pad.bottom} L${x(0).toFixed(1)},${height - pad.bottom} Z`;
+  const ticks = Array.from({ length: 4 }, (_, index) => Math.round(max - index * (max - min) / 3));
+  const gradientId = `rating-fill-${platform.toLowerCase()}`;
+  const firstDate = new Date(points[0].timestamp * 1000).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  const lastDate = new Date(points.at(-1).timestamp * 1000).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+
+  summary.innerHTML = `<span><small>Current</small><strong>${Math.round(points.at(-1).rating)}</strong></span><span><small>Peak</small><strong>${Math.round(rawMax)}</strong></span>`;
+  container.innerHTML = `
+    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${platform} rating history over ${points.length} contests">
+      <defs><linearGradient id="${gradientId}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".2"></stop><stop offset="1" stop-color="currentColor" stop-opacity="0"></stop></linearGradient></defs>
+      ${ticks.map((tick) => `<g><line class="chart-gridline" x1="${pad.left}" x2="${width - pad.right}" y1="${y(tick)}" y2="${y(tick)}"></line><text class="chart-axis-label" x="${pad.left - 10}" y="${y(tick) + 4}" text-anchor="end">${tick}</text></g>`).join("")}
+      <path d="${area}" fill="url(#${gradientId})"></path>
+      <path class="chart-line" d="${line}"></path>
+      ${points.map((point, index) => `<circle class="chart-point" cx="${x(index)}" cy="${y(point.rating)}" r="3.4"><title>${escapeHtml(point.label)}: ${Math.round(point.rating)}</title></circle>`).join("")}
+      <text class="chart-date-label" x="${pad.left}" y="${height - 7}">${firstDate}</text>
+      <text class="chart-date-label" x="${width - pad.right}" y="${height - 7}" text-anchor="end">${lastDate}</text>
+    </svg>
+  `;
 }
 
 function renderProblems() {
@@ -227,16 +288,29 @@ async function loadCodeforces() {
     state.problems.push(...acceptedProblems);
     elements.codeforcesSolved.textContent = formatSolvedTotal(acceptedProblems.length, totalProblems, !problemset);
     elements.codeforcesRating.textContent = user.rating || "Unrated";
+    elements.profileCodeforcesRating.textContent = user.rating || "Unrated";
     elements.codeforcesContests.textContent = ratingHistory.length;
     renderDifficultyGrid(elements.codeforcesDifficultyGrid, codeforcesDifficultyBuckets, difficultyCounts, "codeforces-card");
+    renderRatingChart(
+      elements.codeforcesRatingChart,
+      elements.codeforcesRatingSummary,
+      ratingHistory.map((contest) => ({
+        rating: contest.newRating,
+        timestamp: contest.ratingUpdateTimeSeconds,
+        label: contest.contestName
+      })).filter((point) => Number.isFinite(point.rating) && Number.isFinite(point.timestamp)),
+      "Codeforces"
+    );
     updateTotal();
     renderProblems();
     addStatus(`Codeforces loaded: ${acceptedProblems.length} solved.`);
   } catch (error) {
     elements.codeforcesSolved.textContent = formatSolvedTotal(state.codeforcesSolved, FALLBACK_TOTALS.codeforces, true);
     elements.codeforcesRating.textContent = "Error";
+    elements.profileCodeforcesRating.textContent = "Unavailable";
     elements.codeforcesContests.textContent = "Error";
     elements.codeforcesDifficultyGrid.innerHTML = "<p>Codeforces difficulty failed to load.</p>";
+    renderRatingChart(elements.codeforcesRatingChart, elements.codeforcesRatingSummary, [], "Codeforces");
     addStatus(`Codeforces failed: ${error.message}.`);
   }
 }
@@ -423,6 +497,17 @@ async function loadLeetCode() {
     elements.leetcodeEasy.textContent = easy;
     elements.leetcodeMedium.textContent = medium;
     elements.leetcodeHard.textContent = hard;
+    renderDifficultyGrid(elements.leetcodeDifficultyGrid, leetcodeDifficultyBuckets, { Easy: easy, Medium: medium, Hard: hard }, "leetcode-card");
+    renderRatingChart(
+      elements.leetcodeRatingChart,
+      elements.leetcodeRatingSummary,
+      (contestData.contestParticipation || []).map((contest) => ({
+        rating: contest.rating,
+        timestamp: contest.contest?.startTime,
+        label: contest.contest?.title || "LeetCode contest"
+      })).filter((point) => Number.isFinite(point.rating) && Number.isFinite(point.timestamp)),
+      "LeetCode"
+    );
     updateTotal();
     renderProblems();
     addStatus(`LeetCode loaded: ${solved} solved.`);
@@ -433,6 +518,8 @@ async function loadLeetCode() {
     elements.leetcodeEasy.textContent = "Error";
     elements.leetcodeMedium.textContent = "Error";
     elements.leetcodeHard.textContent = "Error";
+    elements.leetcodeDifficultyGrid.innerHTML = "<p>LeetCode difficulty failed to load.</p>";
+    renderRatingChart(elements.leetcodeRatingChart, elements.leetcodeRatingSummary, [], "LeetCode");
     addStatus(`LeetCode failed: ${error.message}.`);
   }
 }
@@ -443,6 +530,7 @@ function init() {
   renderProblems();
   renderDifficultyGrid(elements.codeforcesDifficultyGrid, codeforcesDifficultyBuckets, {}, "codeforces-card");
   renderDifficultyGrid(elements.atcoderDifficultyGrid, atcoderDifficultyBuckets, {}, "atcoder-card");
+  renderDifficultyGrid(elements.leetcodeDifficultyGrid, leetcodeDifficultyBuckets, {}, "leetcode-card");
   loadCodeforces();
   loadAtCoder();
   loadLeetCode();

@@ -10,7 +10,7 @@
 <body>
   <nav class="topbar">
     <a class="brand" href="#top"><span class="brand-glyph">N</span><span>NomNom<span class="brand-muted">.cp</span></span></a>
-    <div class="nav-links"><a href="#overview">Overview</a><a href="#difficulty">Difficulty</a><a href="#activity">Activity</a></div>
+    <div class="nav-links"><a href="#overview">Overview</a><a href="#difficulty">Difficulty</a><a href="#ratings">Ratings</a><a href="#activity">Activity</a></div>
     <a class="profile-link" href="https://codeforces.com/profile/NomNomFull" target="_blank" rel="noreferrer"><span class="status-dot"></span> NomNomFull <span>↗</span></a>
   </nav>
 
@@ -35,7 +35,7 @@
       <div class="platform-grid platform-solved-grid">
         <a class="platform-card codeforces-card" href="https://codeforces.com/profile/NomNomFull" target="_blank" rel="noreferrer"><span class="platform-mark">CF</span><span class="platform-name">Codeforces</span><strong id="codeforcesSolved">—</strong><small>Solved problems</small></a>
         <a class="platform-card atcoder-card" href="https://atcoder.jp/users/NomNomCode" target="_blank" rel="noreferrer"><span class="platform-mark">AC</span><span class="platform-name">AtCoder</span><strong id="atcoderSolved">—</strong><small>Solved problems</small></a>
-        <a class="platform-card cses-card" href="https://cses.fi/problemset/" target="_blank" rel="noreferrer"><span class="platform-mark">CS</span><span class="platform-name">CSES</span><strong id="csesSolved">16 / 400</strong><small>Solved problems</small></a>
+        <a class="platform-card cses-card" href="https://cses.fi/problemset/" target="_blank" rel="noreferrer"><span class="platform-mark">CS</span><span class="platform-name">CSES</span><strong id="csesSolved">53 / 400</strong><small>Solved problems</small></a>
         <a class="platform-card leetcode-card" href="https://leetcode.com/u/NomNomCode/" target="_blank" rel="noreferrer"><span class="platform-mark">LC</span><span class="platform-name">LeetCode</span><strong id="leetcodeSolved">—</strong><small>Solved problems</small></a>
       </div>
 
@@ -49,14 +49,31 @@
 
     <section class="section" id="difficulty">
       <div class="section-heading"><div><span class="section-index">02</span><h2>Training depth</h2></div></div>
-      <div class="difficulty-columns">
-        <div><h3>Codeforces</h3><div id="codeforcesDifficultyGrid" class="stats-grid difficulty-grid"></div></div>
-        <div><h3>AtCoder</h3><div id="atcoderDifficultyGrid" class="stats-grid difficulty-grid"></div></div>
+      <div class="training-layout">
+        <div class="difficulty-columns">
+          <div><h3>Codeforces</h3><div id="codeforcesDifficultyGrid" class="stats-grid difficulty-grid"></div></div>
+          <div><h3>AtCoder</h3><div id="atcoderDifficultyGrid" class="stats-grid difficulty-grid"></div></div>
+          <div><h3>LeetCode</h3><div id="leetcodeDifficultyGrid" class="stats-grid difficulty-grid"></div></div>
+        </div>
+        <aside class="profile-panel">
+          <span class="section-index">PROFILE</span><div class="avatar">NN</div><h2>Thinh Nguyen</h2>
+          <p>Mathematics &amp; Statistics @UC Berkeley | Competitive Programmer | Aspiring Ph.D candidate in Statistics, Operation Research, or Applied Math</p>
+          <div class="profile-rows"><div><span>Primary handle</span><strong>NomNomFull</strong></div><div><span>Primary platform</span><strong>Codeforces</strong></div><div><span>Current rating</span><strong id="profileCodeforcesRating">—</strong></div></div>
+          <a href="https://codeforces.com/profile/NomNomFull" target="_blank" rel="noreferrer">View Codeforces profile <span>↗</span></a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="ratings">
+      <div class="section-heading"><div><span class="section-index">03</span><h2>Rating trajectory</h2></div><span class="chart-note">Contest-by-contest history</span></div>
+      <div class="rating-grid">
+        <article class="rating-card"><div class="rating-card-head"><div><span class="platform-mark cf-mark">CF</span><span><small>Codeforces</small><h3>Rating history</h3></span></div><div id="codeforcesRatingSummary" class="rating-summary"></div></div><div id="codeforcesRatingChart" class="rating-chart codeforces"><div class="chart-empty">Loading rating history…</div></div></article>
+        <article class="rating-card"><div class="rating-card-head"><div><span class="platform-mark lc-mark">LC</span><span><small>LeetCode</small><h3>Rating history</h3></span></div><div id="leetcodeRatingSummary" class="rating-summary"></div></div><div id="leetcodeRatingChart" class="rating-chart leetcode"><div class="chart-empty">Loading rating history…</div></div></article>
       </div>
     </section>
 
     <section class="section" id="activity">
-      <div class="section-heading"><div><span class="section-index">03</span><h2>Recent activity</h2></div></div>
+      <div class="section-heading"><div><span class="section-index">04</span><h2>Recent activity</h2></div></div>
       <div class="problem-head"><span>Problem</span><span>Platform and details</span><span></span></div>
       <div id="problemList" class="problem-list"></div>
     </section>
