@@ -1,114 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thinh - CP Progress</title>
+  <meta name="description" content="Thinh Nguyen's competitive programming dashboard across Codeforces, AtCoder, CSES, and LeetCode.">
+  <title>Competitive Programming Dashboard</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main>
-    <section class="hero">
-      <p class="eyebrow">Competitive Programming</p>
-      <h1>My Competitive Programming Progress</h1>
-      <p class="summary">
-        Live stats for
-        <a href="https://codeforces.com/profile/NomNomFull" target="_blank" rel="noreferrer">Codeforces</a>,
-        <a href="https://atcoder.jp/users/NomNomCode" target="_blank" rel="noreferrer">AtCoder</a>,
-        <a href="https://cses.fi/problemset/" target="_blank" rel="noreferrer">CSES</a>,
-        and <a href="https://leetcode.com/u/NomNomCode/" target="_blank" rel="noreferrer">LeetCode</a>.
-      </p>
+  <nav class="topbar">
+    <a class="brand" href="#top"><span class="brand-glyph">N</span><span>NomNom<span class="brand-muted">.cp</span></span></a>
+    <div class="nav-links"><a href="#overview">Overview</a><a href="#difficulty">Difficulty</a><a href="#activity">Activity</a></div>
+    <a class="profile-link" href="https://codeforces.com/profile/NomNomFull" target="_blank" rel="noreferrer"><span class="status-dot"></span> NomNomFull <span>↗</span></a>
+  </nav>
+
+  <main id="top">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker"><span></span>Competitive programming dashboard</p>
+        <h1>Progress you can<br><em>measure.</em></h1>
+        <p class="summary">A live, consolidated view of solved problems, contest ratings, and training depth across four platforms.</p>
+        <a class="primary-button" href="#overview">Explore performance <span>↓</span></a>
+      </div>
+      <div class="hero-metric">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <span>Total solved</span><strong id="totalSolved">—</strong><small>Across all platforms</small>
+      </div>
+    </header>
+
+    <section class="section" id="overview">
+      <div class="section-heading"><div><span class="section-index">01</span><h2>Platform overview</h2></div><p id="statusMessage" class="status">Connecting to platform APIs…</p></div>
+
+      <h3 class="visually-hidden">Problems solved by platform</h3>
+      <div class="platform-grid platform-solved-grid">
+        <a class="platform-card codeforces-card" href="https://codeforces.com/profile/NomNomFull" target="_blank" rel="noreferrer"><span class="platform-mark">CF</span><span class="platform-name">Codeforces</span><strong id="codeforcesSolved">—</strong><small>Solved problems</small></a>
+        <a class="platform-card atcoder-card" href="https://atcoder.jp/users/NomNomCode" target="_blank" rel="noreferrer"><span class="platform-mark">AC</span><span class="platform-name">AtCoder</span><strong id="atcoderSolved">—</strong><small>Solved problems</small></a>
+        <a class="platform-card cses-card" href="https://cses.fi/problemset/" target="_blank" rel="noreferrer"><span class="platform-mark">CS</span><span class="platform-name">CSES</span><strong id="csesSolved">16 / 400</strong><small>Solved problems</small></a>
+        <a class="platform-card leetcode-card" href="https://leetcode.com/u/NomNomCode/" target="_blank" rel="noreferrer"><span class="platform-mark">LC</span><span class="platform-name">LeetCode</span><strong id="leetcodeSolved">—</strong><small>Solved problems</small></a>
+      </div>
+
+      <div class="metric-columns">
+        <div class="metric-group"><h3>Current ratings</h3><div class="stats-grid three-columns"><article><span>Codeforces</span><strong id="codeforcesRating">—</strong></article><article><span>AtCoder</span><strong id="atcoderRating">—</strong></article><article><span>LeetCode</span><strong id="leetcodeRating">—</strong></article></div></div>
+        <div class="metric-group"><h3>Contests</h3><div class="stats-grid three-columns"><article><span>Codeforces</span><strong id="codeforcesContests">—</strong></article><article><span>AtCoder</span><strong id="atcoderContests">—</strong></article><article><span>LeetCode</span><strong id="leetcodeContests">—</strong></article></div></div>
+      </div>
+
+      <div class="leetcode-breakdown"><h3>LeetCode difficulty</h3><div class="stats-grid three-columns"><article><span>Easy</span><strong id="leetcodeEasy">—</strong></article><article><span>Medium</span><strong id="leetcodeMedium">—</strong></article><article><span>Hard</span><strong id="leetcodeHard">—</strong></article></div></div>
     </section>
 
-    <section>
-      <h2>Stats</h2>
-      <h3 class="stats-subtitle">Solved</h3>
-      <div class="total-card">
-        <span>Total solved</span>
-        <strong id="totalSolved">Loading...</strong>
-        <small>Across Codeforces, AtCoder, CSES, and LeetCode</small>
+    <section class="section" id="difficulty">
+      <div class="section-heading"><div><span class="section-index">02</span><h2>Training depth</h2></div></div>
+      <div class="difficulty-columns">
+        <div><h3>Codeforces</h3><div id="codeforcesDifficultyGrid" class="stats-grid difficulty-grid"></div></div>
+        <div><h3>AtCoder</h3><div id="atcoderDifficultyGrid" class="stats-grid difficulty-grid"></div></div>
       </div>
-
-      <div class="stats-grid platform-solved-grid">
-        <article class="platform-card codeforces-card">
-          <span class="platform-name">Codeforces solved</span>
-          <strong id="codeforcesSolved">Loading...</strong>
-        </article>
-        <article class="platform-card atcoder-card">
-          <span class="platform-name">AtCoder solved</span>
-          <strong id="atcoderSolved">Loading...</strong>
-        </article>
-        <article class="platform-card cses-card">
-          <span class="platform-name">CSES solved</span>
-          <strong id="csesSolved">0</strong>
-        </article>
-        <article class="platform-card leetcode-card">
-          <span class="platform-name">LeetCode solved</span>
-          <strong id="leetcodeSolved">Loading...</strong>
-        </article>
-      </div>
-
-      <h3 class="stats-subtitle">Ratings</h3>
-      <div class="stats-grid three-columns">
-        <article class="platform-card codeforces-card">
-          <span class="platform-name">Codeforces rating</span>
-          <strong id="codeforcesRating">Loading...</strong>
-        </article>
-        <article class="platform-card atcoder-card">
-          <span class="platform-name">AtCoder rating</span>
-          <strong id="atcoderRating">Loading...</strong>
-        </article>
-        <article class="platform-card leetcode-card">
-          <span class="platform-name">LeetCode rating</span>
-          <strong id="leetcodeRating">Loading...</strong>
-        </article>
-      </div>
-
-      <h3 class="stats-subtitle">Contests Participated</h3>
-      <div class="stats-grid three-columns">
-        <article class="platform-card codeforces-card">
-          <span class="platform-name">Codeforces</span>
-          <strong id="codeforcesContests">Loading...</strong>
-        </article>
-        <article class="platform-card atcoder-card">
-          <span class="platform-name">AtCoder</span>
-          <strong id="atcoderContests">Loading...</strong>
-        </article>
-        <article class="platform-card leetcode-card">
-          <span class="platform-name">LeetCode</span>
-          <strong id="leetcodeContests">Loading...</strong>
-        </article>
-      </div>
-
-      <h3 class="stats-subtitle">LeetCode Difficulty</h3>
-      <div class="stats-grid three-columns">
-        <article class="platform-card leetcode-card">
-          <span>Easy</span>
-          <strong id="leetcodeEasy">Loading...</strong>
-        </article>
-        <article class="platform-card leetcode-card">
-          <span>Medium</span>
-          <strong id="leetcodeMedium">Loading...</strong>
-        </article>
-        <article class="platform-card leetcode-card">
-          <span>Hard</span>
-          <strong id="leetcodeHard">Loading...</strong>
-        </article>
-      </div>
-
-      <h3 class="stats-subtitle">Codeforces Difficulty</h3>
-      <div id="codeforcesDifficultyGrid" class="stats-grid difficulty-grid"></div>
-
-      <h3 class="stats-subtitle">AtCoder Difficulty</h3>
-      <div id="atcoderDifficultyGrid" class="stats-grid difficulty-grid"></div>
-      <p id="statusMessage" class="status">Connecting to platform APIs...</p>
     </section>
-    <section>
-      <h2>Recent Solved Problems</h2>
+
+    <section class="section" id="activity">
+      <div class="section-heading"><div><span class="section-index">03</span><h2>Recent activity</h2></div></div>
+      <div class="problem-head"><span>Problem</span><span>Platform and details</span><span></span></div>
       <div id="problemList" class="problem-list"></div>
     </section>
-  </main>
 
+    <footer><a class="brand" href="#top"><span class="brand-glyph">N</span><span>NomNom<span class="brand-muted">.cp</span></span></a><p>Built for deliberate practice. Data belongs to its respective platforms.</p><a href="#top">Back to top ↑</a></footer>
+  </main>
   <script src="script.js"></script>
 </body>
 </html>
